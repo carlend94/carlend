@@ -33,52 +33,27 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  // login() {
-  //
-  //   this.loading = true;
-  //   this.authenticationService.login()
-  //     .subscribe(result => {
-  //       if (result === true) {
-  //         // login successful
-  //         console.log(result);
-  //         this.router.navigate(['/']);
-  //       } else {
-  //         // login failed
-  //         this.error = 'Username or password is incorrect';
-  //         this.loading = false;
-  //       }
-  //     });
-  // }
 
   submitForm(model: UserModel) {
     this.submitted = true; // set form submit to true
 
-    // this.login();
-    // console.log(model.email, isValid);
-    // let email = model.email;
-    // let password = model.password;
     this.authenticationService.login(model)
       .subscribe(
         data => {
+                if (data === true) {
+                  this.router.navigate(['/dashboard']);
+                } else {
+                  this.error = 'Username or password is incorrect';
+                  this.loading = false;
+                }
           // this.router.navigate(['/']);
-          console.log(data)
+          console.log(data);
         },
         error => {
       console.log(error);
         });
 
 
-      // this.authenticationService.login(model)
-      //   .subscribe(result => {
-      //       // login successful
-      //       console.log(result);
-      //       this.router.navigate(['/']);
-      //     } else {
-      //       // login failed
-      //       this.error = 'Username or password is incorrect';
-      //       this.loading = false;
-      //     }
-      //   });
   }
 
 }

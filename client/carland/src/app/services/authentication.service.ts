@@ -18,41 +18,29 @@ export class AuthenticationService {
     this.token = currentUser && currentUser.token;
   }
 
-  login(model: any): Observable<string> {
-    // let body =JSON.stringify({"Statuses":["Submitted", "Opened"]});
-    // let headers = new Headers({ 'Content-Type': 'application/json' });
-    //
-    // headers.append('Access-Control-Allow-Origin','*');
-    // let options = new RequestOptions({ headers: headers });
-
+  login(model: any): Observable<boolean> {
 
     return this.http.post('/api/auth/login', model)
       .map((data: any) => {
-        return data;
+
+        let token = data.token;
+
+        if (token) {
+          // set token property
+          this.token = token;
+
+          // store username and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify({ token: token }));
+
+          // return true to indicate successful login
+          return true;
+        } else {
+          // return false to indicate failed login
+          return false;
+        }
+
       });
 
-    //
-    // return this.http.post('http://localhost:3000/api/auth/login', UserModel.getApiModel())
-    //   .map((res: Response) => {
-    //     let user = res.json();
-    //
-    //     console.log(user);
-    //   // login successful if there's a jwt token in the response
-    //     // let token = response.json() && response.json().token;
-    //     // if (token) {
-    //     //   // set token property
-    //     //   this.token = token;
-    //     //
-    //     //   // store username and jwt token in local storage to keep user logged in between page refreshes
-    //     //   localStorage.setItem('currentUser', JSON.stringify({ token: token }));
-    //     //
-    //     //   // return true to indicate successful login
-    //     //   return true;
-    //     // } else {
-    //     //   // return false to indicate failed login
-    //     //   return false;
-    //     // }
-    //   });
   }
 
   logout(): void {
@@ -60,4 +48,6 @@ export class AuthenticationService {
     this.token = null;
     localStorage.removeItem('currentUser');
   }
+
+
 }
