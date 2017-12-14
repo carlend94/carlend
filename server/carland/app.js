@@ -9,7 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var usersNew = require('./controllers/user.controller');
 var mongoose = require('mongoose');
-mongoose.connect("mongodb://localhost/test",{ useMongoClient: true } );
+mongoose.connect("mongodb://localhost/allUsers2",{ useMongoClient: true } );
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));

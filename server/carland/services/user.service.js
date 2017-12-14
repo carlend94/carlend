@@ -6,12 +6,10 @@ var Q = require('q');
 var mongo = require('mongoskin');
 // var db = mongo.db(config.connectionString, { native_parser: true });
 // db.bind('users');
-var mongoose = require('mongoose');
-mongoose.connect("mongodb://localhost/test",{ useMongoClient: true } );
-var db = mongoose.connection;
 var service = {};
 var express = require('express');
 var router = express.Router();
+var user = require('./../models/user');
 
 service.authenticate = authenticate;
 service.getAll = getAll;
@@ -19,8 +17,6 @@ service.getById = getById;
 service.create = create;
 service.update = update;
 service.delete = _delete;
-
-module.exports = service;
 
 function authenticate(username, password) {
     var deferred = Q.defer();
@@ -82,39 +78,51 @@ function getById(_id) {
 }
 
 function create(userParam) {
-    var deferred = Q.defer();
+    var userCreate = new user({
+      username: userParam.username,
+      password: userParam.password
+    });
 
-    // validation
-    db.users.findOne(
-        { username: userParam.username },
-        function (err, user) {
-            if (err) deferred.reject(err.name + ': ' + err.message);
-
-            if (user) {
-                // username already exists
-                deferred.reject('Username "' + userParam.username + '" is already taken');
-            } else {
-                createUser();
-            }
-        });
-
-    function createUser() {
-        // set user object to userParam without the cleartext password
-        var user = _.omit(userParam, 'password');
-
-        // add hashed password to user object
-        user.hash = bcrypt.hashSync(userParam.password, 10);
-
-        db.users.insert(
-            user,
-            function (err, doc) {
-                if (err) deferred.reject(err.name + ': ' + err.message);
-
-                deferred.resolve();
-            });
-    }
-
-    return deferred.promise;
+    userCreate.save(function() {
+        console.log('lala')
+       // if (error) {
+       //     console.log(error);
+       //  }
+    })
+    // db.allUsers.insert({username: userParam.username, password: userParam.password})
+    // var deferred = Q.defer();
+    //
+    // // validation
+    // db.allUsers.findOne(
+    //     { username: userParam.username },
+    //     function (err, user) {
+    //         if (err) deferred.reject(err.name + ': ' + err.message);
+    //
+    //         if (user) {
+    //             // username already exists
+    //             deferred.reject('Username "' + userParam.username + '" is already taken');
+    //         } else {
+    //             createUser();
+    //         }
+    //     });
+    //
+    // function createUser() {
+    //     // set user object to userParam without the cleartext password
+    //     var user = _.omit(userParam, 'password');
+    //
+    //     // add hashed password to user object
+    //     user.hash = bcrypt.hashSync(userParam.password, 10);
+    //
+    //     db.allUsers.insert(
+    //         user,
+    //         function (err, doc) {
+    //             if (err) deferred.reject(err.name + ': ' + err.message);
+    //
+    //             deferred.resolve();
+    //         });
+    // }
+    //
+    // return deferred.promise;
 }
 
 function update(_id, userParam) {
@@ -184,4 +192,4 @@ function _delete(_id) {
 }
 
 
-module.exports = router;
+module.exports = service;

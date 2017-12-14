@@ -31,12 +31,7 @@ function authenticate(req, res) {
 
 function register(req, res) {
     userService.create(req.body)
-        .then(function () {
-            res.sendStatus(200);
-        })
-        .catch(function (err) {
-            res.status(400).send(err);
-        });
+    res.send('ok')
 }
 
 function getAll(req, res) {
@@ -50,18 +45,17 @@ function getAll(req, res) {
 }
 
 function getCurrent(req, res) {
-    res.send('lalalalala')
-    // userService.getById(req.user.sub)
-    //     .then(function (user) {
-    //         if (user) {
-    //             res.send(user);
-    //         } else {
-    //             res.sendStatus(404);
-    //         }
-    //     })
-    //     .catch(function (err) {
-    //         res.status(400).send(err);
-    //     });
+    userService.getById(req.user.sub)
+        .then(function (user) {
+            if (user) {
+                res.send(user);
+            } else {
+                res.sendStatus(404);
+            }
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
 }
 
 function update(req, res) {
